@@ -164,25 +164,41 @@ async function initProductsPage() {
     });
 }
 
+const DEFAULT_PRODUCTS = [
+    { id: 1, name: "Teclado Mecánico RGB Redragon Kumara", image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=600&q=80", category: "perifericos", price: 45000.00, active: 1 },
+    { id: 2, name: "Mouse Gamer Logitech G502 Hero", image: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format&fit=crop&w=600&q=80", category: "perifericos", price: 38000.00, active: 1 },
+    { id: 3, name: "Auriculares HyperX Cloud Flight Wireless", image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80", category: "perifericos", price: 82000.00, active: 1 },
+    { id: 4, name: "Mousepad XXL Gaming Speed", image: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=600&q=80", category: "perifericos", price: 18000.00, active: 1 },
+    { id: 5, name: "Micrófono Condensador USB FIFINE", image: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=600&q=80", category: "perifericos", price: 52000.00, active: 1 },
+    { id: 6, name: "Webcam Logitech C920 Full HD", image: "https://images.unsplash.com/photo-1588508065123-287b28e013da?auto=format&fit=crop&w=600&q=80", category: "perifericos", price: 65000.00, active: 1 },
+    { id: 7, name: "Memoria RAM Corsair Vengeance 16GB DDR4", image: "https://images.unsplash.com/photo-1562976540-1502c2145186?auto=format&fit=crop&w=600&q=80", category: "componentes", price: 42000.00, active: 1 },
+    { id: 8, name: "Disco SSD NVMe Kingston 1TB M.2", image: "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?auto=format&fit=crop&w=600&q=80", category: "componentes", price: 68000.00, active: 1 },
+    { id: 9, name: "Placa de Video GeForce RTX 4060 8GB", image: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=600&q=80", category: "componentes", price: 340000.00, active: 1 },
+    { id: 10, name: "Fuente de Poder Gigabyte 750W 80 Plus Gold", image: "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?auto=format&fit=crop&w=600&q=80", category: "componentes", price: 95000.00, active: 1 },
+    { id: 11, name: "Gabinete ATX Cooler Master Vidrio Templado", image: "https://images.unsplash.com/photo-1555680202-c86f0e12f086?auto=format&fit=crop&w=600&q=80", category: "componentes", price: 78000.00, active: 1 },
+    { id: 12, name: "Cooler CPU Deepcool Gammaxx AG400", image: "https://images.unsplash.com/photo-1587202372616-b43abea06c2a?auto=format&fit=crop&w=600&q=80", category: "componentes", price: 29000.00, active: 1 }
+];
+
 async function loadProducts() {
     const productsContainer = document.getElementById("productsContainer");
     productsContainer.innerHTML = `<p class="centrado" style="grid-column: 1/-1;">Cargando catálogo de productos...</p>`;
 
     try {
-        // Intentamos cargar de la API REST activa
+        // 1. Intentamos cargar desde la API REST si el backend está activo
         const response = await fetch(`${API_BASE_URL}/api/products/active`);
         if (!response.ok) throw new Error("API no disponible");
         const data = await response.json();
         allProducts = data.payload || [];
     } catch (err) {
-        console.warn("No se pudo conectar a la API. Usando JSON hardcodeado de respaldo:", err);
+        console.warn("API REST no detectada. Intentando cargar archivo JSON local:", err.message);
         try {
+            // 2. Intentamos cargar el archivo products.json
             const fallbackResponse = await fetch("data/products.json");
             allProducts = await fallbackResponse.json();
         } catch (fallbackErr) {
-            console.error("Error al cargar JSON de respaldo:", fallbackErr);
-            productsContainer.innerHTML = `<p class="mensaje error">Error al cargar productos.</p>`;
-            return;
+            // 3. Fallback de respaldo interno (útil si se abre directamente por file://)
+            console.warn("Cargando catálogo de respaldo integrado en memoria:", fallbackErr.message);
+            allProducts = DEFAULT_PRODUCTS;
         }
     }
 
