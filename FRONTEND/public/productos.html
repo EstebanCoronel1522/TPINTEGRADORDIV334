@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos - TechStore Autoservicio</title>
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="css/client.css">
+</head>
+<body>
+
+    <!-- Header requerido en todas las pantallas -->
+    <header class="client-header">
+        <div class="header-top">
+            <a href="index.html" class="brand-wrapper">
+                <img src="img/logo.jpg" alt="Logo TechStore" class="app-logo">
+                <div>
+                    <h1 class="brand-title">TechStore Autoservicio</h1>
+                    <p class="students-tag">Alumnos: División 334 - UTN</p>
+                </div>
+            </a>
+
+            <div class="header-actions">
+                <nav>
+                    <a href="index.html" class="nav-link">Inicio</a>
+                    <a href="productos.html" class="nav-link">Productos</a>
+                    <a href="carrito.html" class="nav-link">
+                        Carrito <span class="cart-badge">0</span>
+                    </a>
+                    <a href="http://localhost:3000/login" class="nav-link" target="_blank" title="Acceso al panel backoffice">
+                        Panel Admin
+                    </a>
+                </nav>
+                <button type="button" id="themeToggle" class="btn-theme">🌙 Modo Oscuro</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido Principal: Catálogo de Productos -->
+    <main class="main-content">
+        <div class="section-header">
+            <div>
+                <h2 id="userGreeting" style="font-size: 1.6rem; color: var(--primary);">Catálogo de Productos</h2>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">Seleccione los productos deseados para su pedido de autoservicio.</p>
+            </div>
+            <a href="carrito.html" class="btn-primary" style="padding: 0.6rem 1.2rem; font-size: 0.95rem;">
+                Ver Carrito &rarr;
+            </a>
+        </div>
+
+        <!-- Filtro de Categorías -->
+        <div class="categories-bar">
+            <button type="button" class="category-btn active" data-category="todos">Todos los Productos</button>
+            <button type="button" class="category-btn" data-category="perifericos">Periféricos</button>
+            <button type="button" class="category-btn" data-category="componentes">Componentes</button>
+        </div>
+
+        <!-- Grilla de Productos Dinámicos / Paginados -->
+        <div id="productsContainer" class="products-grid"></div>
+
+        <!-- Contenedor de Paginación -->
+        <div id="paginationContainer" class="pagination-container"></div>
+    </main>
+
+    <!-- Footer requerido en todas las pantallas -->
+    <footer class="client-footer">
+        <p>&copy; 2026 <strong>TechStore Autoservicio</strong> - Programación III | División 334</p>
+    </footer>
+
+    <script src="js/client.js"></script>
+</body>
+</html>

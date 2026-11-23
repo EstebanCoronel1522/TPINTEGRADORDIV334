@@ -1,0 +1,21 @@
+<%- include("partials/head.ejs") %>
+<%- include("partials/header.ejs") %>
+
+<main>
+    <section class="eliminar-container">
+        <h3 class="centrado"><%= about %></h3>
+
+        <form id="getProductForm">
+            <label for="idProd">ID del Producto a Eliminar</label>
+            <input type="number" name="idProd" id="idProd" min="1" placeholder="Ej: 1" required>
+
+            <input type="submit" value="Buscar Producto">
+        </form>
+
+        <div id="contenedor-productos"></div>
+    </section>
+</main>
+
+<script src="/js/delete.js"></script>
+
+<%- include("partials/footer.ejs") %>

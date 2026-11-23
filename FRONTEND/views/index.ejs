@@ -1,0 +1,37 @@
+<%- include("partials/head.ejs") %>
+<%- include("partials/header.ejs") %>
+
+<main>
+    <div class="dashboard-header">
+        <h2>Panel de Control - Listado de Productos</h2>
+        <p>Administración del catálogo para el autoservicio (Hardware & Periféricos)</p>
+    </div>
+
+    <% if (typeof error !== "undefined") { %>
+        <p class="mensaje error centrado"><%= error %></p>
+    <% } %>
+
+    <section id="contenedor-productos">
+        <% if (listaProductos && listaProductos.length > 0) { %>
+            <% listaProductos.forEach(producto => { %>
+                <div class="card-producto <%= producto.active ? 'producto-activo' : 'producto-inactivo' %>">
+                    <img class="card-img" src="<%= producto.image %>" alt="<%= producto.name %>" onerror="this.src='/img/logo.jpg'">
+                    <h4><%= producto.name %></h4>
+                    <p><strong>ID:</strong> <%= producto.id %></p>
+                    <p><strong>Precio:</strong> $<%= Number(producto.price).toLocaleString('es-AR') %></p>
+                    <p><strong>Categoría:</strong> <%= producto.category %></p>
+                    <p>
+                        <strong>Estado:</strong> 
+                        <span class="badge <%= producto.active ? 'badge-activo' : 'badge-inactivo' %>">
+                            <%= producto.active ? 'Activo' : 'Inactivo' %>
+                        </span>
+                    </p>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <p class="centrado">No hay productos registrados en el sistema.</p>
+        <% } %>
+    </section>
+</main>
+
+<%- include("partials/footer.ejs") %>

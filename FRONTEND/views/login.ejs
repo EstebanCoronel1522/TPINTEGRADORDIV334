@@ -1,0 +1,46 @@
+<%- include("partials/head.ejs") %>
+
+<header class="app-header">
+    <div class="brand-bar">
+        <div class="logo-container">
+            <img class="logo-header" src="/img/logo.jpg" alt="Logo de TechStore">
+        </div>
+        <div class="brand-info">
+            <h1 class="brand-title">TechStore Autoservicio</h1>
+            <p class="students-badge">Desarrollado por: División 334 - UTN</p>
+        </div>
+    </div>
+</header>
+
+<main>
+    <div class="login-wrapper">
+        <h3 class="centrado"><%= about %></h3>
+
+        <form class="form-login" action="/login" method="POST">
+            <label for="emailUser">Correo Electrónico</label>
+            <input type="email" name="email" id="emailUser" placeholder="admin@autoservicio.com" required>
+
+            <label for="passwordUser">Contraseña</label>
+            <input type="password" name="password" id="passwordUser" placeholder="••••••••" required>
+
+            <div class="login-actions">
+                <input type="submit" value="Iniciar Sesión">
+                <button type="button" id="btn-quick-access" class="btn-secondary">Acceso Rápido (Tester)</button>
+            </div>
+        </form>
+
+        <% if (typeof error !== "undefined") { %>
+            <p class="mensaje error centrado"><%= error %></p>
+        <% } %>
+    </div>
+</main>
+
+<script>
+    // Botón de acceso rápido para facilitar el testing del evaluador
+    document.getElementById("btn-quick-access")?.addEventListener("click", () => {
+        document.getElementById("emailUser").value = "admin@autoservicio.com";
+        document.getElementById("passwordUser").value = "admin123";
+    });
+</script>
+
+<%- include("partials/footer.ejs") %>
