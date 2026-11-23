@@ -1,0 +1,22 @@
+<%- include("partials/head.ejs") %>
+<%- include("partials/header.ejs") %>
+
+<main>
+    <section class="modificar-container">
+        <h3 class="centrado"><%= about %></h3>
+
+        <form id="getProductForm">
+            <label for="idProd">ID del Producto a Modificar</label>
+            <input type="number" name="idProd" id="idProd" min="1" placeholder="Ej: 1" required>
+
+            <input type="submit" value="Buscar Producto">
+        </form>
+
+        <div id="contenedor-productos"></div>
+        <div id="contenedor-form"></div>
+    </section>
+</main>
+
+<script src="/js/put.js"></script>
+
+<%- include("partials/footer.ejs") %>

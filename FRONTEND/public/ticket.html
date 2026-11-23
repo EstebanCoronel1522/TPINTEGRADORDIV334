@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket de Compra - TechStore Autoservicio</title>
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="css/client.css">
+    <!-- CDN de jsPDF para generación de PDF del ticket -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+    <!-- Header requerido en todas las pantallas -->
+    <header class="client-header">
+        <div class="header-top">
+            <a href="index.html" class="brand-wrapper">
+                <img src="img/logo.jpg" alt="Logo TechStore" class="app-logo">
+                <div>
+                    <h1 class="brand-title">TechStore Autoservicio</h1>
+                    <p class="students-tag">Alumnos: División 334 - UTN</p>
+                </div>
+            </a>
+
+            <div class="header-actions">
+                <nav>
+                    <a href="index.html" class="nav-link">Inicio</a>
+                    <a href="productos.html" class="nav-link">Productos</a>
+                    <a href="carrito.html" class="nav-link">
+                        Carrito <span class="cart-badge">0</span>
+                    </a>
+                    <a href="http://localhost:3000/login" class="nav-link" target="_blank" title="Acceso al panel backoffice">
+                        Panel Admin
+                    </a>
+                </nav>
+                <button type="button" id="themeToggle" class="btn-theme">🌙 Modo Oscuro</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido Principal: Ticket -->
+    <main class="main-content">
+        <div id="ticketContainer">
+            <div class="ticket-wrapper">
+                <div class="ticket-header">
+                    <h2 style="font-size: 1.5rem; color: var(--primary);">TechStore Autoservicio S.A.</h2>
+                    <p style="font-size: 0.85rem; color: var(--text-muted);">Comprobante No Fiscal de Autoservicio</p>
+                    <p style="font-size: 0.85rem; color: var(--text-muted);">División 334 - UTN Programación III</p>
+                </div>
+
+                <div style="margin-bottom: 1rem; font-size: 0.95rem; line-height: 1.6;">
+                    <p><strong>Nro. Ticket:</strong> <span id="ticketOrderId">#000000</span></p>
+                    <p><strong>Fecha y Hora:</strong> <span id="ticketDate">-</span></p>
+                    <p><strong>Cliente:</strong> <span id="ticketUser">-</span></p>
+                </div>
+
+                <table class="ticket-items-table">
+                    <thead>
+                        <tr>
+                            <th style="text-align: left;">Cant.</th>
+                            <th style="text-align: left;">Descripción</th>
+                            <th style="text-align: right;">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ticketTableBody"></tbody>
+                </table>
+
+                <div class="ticket-total-box">
+                    <span>TOTAL PAGADO:</span>
+                    <span id="ticketTotal">$0</span>
+                </div>
+
+                <div style="text-align: center; margin-top: 1.5rem; font-size: 0.85rem; color: var(--text-muted); font-style: italic;">
+                    <p>¡Gracias por su compra en TechStore!</p>
+                    <p>Guarde este comprobante para retirar su pedido en el mostrador.</p>
+                </div>
+            </div>
+
+            <!-- Botones de Acción del Ticket -->
+            <div class="ticket-actions">
+                <button type="button" id="btnDownloadPdf" class="btn-primary" style="background-color: #0d6efd;">
+                    📄 Descargar Ticket en PDF
+                </button>
+                <button type="button" id="btnRestart" class="btn-secondary" style="background-color: #198754;">
+                    🔄 Salir / Nueva Compra
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer requerido en todas las pantallas -->
+    <footer class="client-footer">
+        <p>&copy; 2026 <strong>TechStore Autoservicio</strong> - Programación III | División 334</p>
+    </footer>
+
+    <script src="js/client.js"></script>
+</body>
+</html>

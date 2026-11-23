@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenida - TechStore Autoservicio</title>
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="css/client.css">
+</head>
+<body>
+
+    <!-- Header requerido en todas las pantallas -->
+    <header class="client-header">
+        <div class="header-top">
+            <a href="index.html" class="brand-wrapper">
+                <img src="img/logo.jpg" alt="Logo TechStore" class="app-logo">
+                <div>
+                    <h1 class="brand-title">TechStore Autoservicio</h1>
+                    <p class="students-tag">Alumnos: División 334 - UTN</p>
+                </div>
+            </a>
+
+            <div class="header-actions">
+                <nav>
+                    <a href="index.html" class="nav-link">Inicio</a>
+                    <a href="productos.html" class="nav-link">Productos</a>
+                    <a href="carrito.html" class="nav-link">
+                        Carrito <span class="cart-badge">0</span>
+                    </a>
+                    <a href="http://localhost:3000/login" class="nav-link" target="_blank" title="Acceso al panel backoffice">
+                        Panel Admin
+                    </a>
+                </nav>
+                <button type="button" id="themeToggle" class="btn-theme">🌙 Modo Oscuro</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido Principal: Bienvenida -->
+    <main class="main-content">
+        <div class="welcome-card">
+            <h2 class="welcome-title">Bienvenido/a al Autoservicio</h2>
+            <p class="welcome-subtitle">Por favor, ingrese su nombre para comenzar a armar su pedido de Hardware y Periféricos.</p>
+
+            <form id="welcomeForm" class="welcome-form">
+                <div>
+                    <label for="userName" class="form-label">Su Nombre:</label>
+                    <input type="text" id="userName" class="form-input" placeholder="Ej: Lucas" required autocomplete="name">
+                </div>
+
+                <button type="submit" class="btn-primary">Continuar a Productos &rarr;</button>
+            </form>
+        </div>
+    </main>
+
+    <!-- Footer requerido en todas las pantallas -->
+    <footer class="client-footer">
+        <p>&copy; 2026 <strong>TechStore Autoservicio</strong> - Programación III | División 334</p>
+    </footer>
+
+    <script src="js/client.js"></script>
+</body>
+</html>

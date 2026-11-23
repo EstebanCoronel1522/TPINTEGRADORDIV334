@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito de Compras - TechStore Autoservicio</title>
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="css/client.css">
+</head>
+<body>
+
+    <!-- Header requerido en todas las pantallas -->
+    <header class="client-header">
+        <div class="header-top">
+            <a href="index.html" class="brand-wrapper">
+                <img src="img/logo.jpg" alt="Logo TechStore" class="app-logo">
+                <div>
+                    <h1 class="brand-title">TechStore Autoservicio</h1>
+                    <p class="students-tag">Alumnos: División 334 - UTN</p>
+                </div>
+            </a>
+
+            <div class="header-actions">
+                <nav>
+                    <a href="index.html" class="nav-link">Inicio</a>
+                    <a href="productos.html" class="nav-link">Productos</a>
+                    <a href="carrito.html" class="nav-link">
+                        Carrito <span class="cart-badge">0</span>
+                    </a>
+                    <a href="http://localhost:3000/login" class="nav-link" target="_blank" title="Acceso al panel backoffice">
+                        Panel Admin
+                    </a>
+                </nav>
+                <button type="button" id="themeToggle" class="btn-theme">🌙 Modo Oscuro</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido Principal: Carrito -->
+    <main class="main-content">
+        <div class="section-header">
+            <div>
+                <h2 style="font-size: 1.6rem; color: var(--primary);">Su Carrito de Compras</h2>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">Modifique cantidades o elimine productos antes de finalizar su orden.</p>
+            </div>
+            <a href="productos.html" class="nav-link" style="border: 1px solid var(--card-border);">
+                &larr; Agregar más productos
+            </a>
+        </div>
+
+        <!-- Mensaje si está vacío -->
+        <div id="cartEmptyMsg" class="welcome-card" style="display: none;">
+            <h3>Su carrito está vacío</h3>
+            <p style="color: var(--text-muted); margin: 1rem 0;">Aún no ha seleccionado productos para su compra.</p>
+            <a href="productos.html" class="btn-primary" style="display: inline-block;">Ver Catálogo de Productos</a>
+        </div>
+
+        <!-- Contenido del Carrito cuando tiene ítems -->
+        <div id="cartContent">
+            <div class="cart-table-wrapper">
+                <table class="cart-table">
+                    <thead>
+                        <tr>
+                            <th>Imagen</th>
+                            <th>Producto</th>
+                            <th>Precio Unitario</th>
+                            <th>Cantidad</th>
+                            <th>Subtotal</th>
+                            <th>Quitar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cartTableBody"></tbody>
+                </table>
+            </div>
+
+            <!-- Resumen y Total -->
+            <div class="cart-summary">
+                <div class="summary-row">
+                    <span>Estado del pedido:</span>
+                    <span>Pendiente</span>
+                </div>
+                <div class="summary-row summary-total">
+                    <span>Total a Pagar:</span>
+                    <span id="cartTotalDisplay">$0</span>
+                </div>
+            </div>
+
+            <!-- Botones de Acción -->
+            <div class="cart-buttons">
+                <a href="productos.html" class="btn-secondary" style="text-decoration: none; display: inline-block;">
+                    &larr; Seguir Comprando
+                </a>
+                <button type="button" id="btnCheckout" class="btn-primary" style="background-color: var(--success);">
+                    Confirmar y Finalizar Compra &rarr;
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal de Confirmación de Compra -->
+    <div id="confirmModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 style="color: var(--primary); margin-bottom: 0.8rem;">Confirmar Pedido</h3>
+            <p style="margin-bottom: 1rem;">¿Desea confirmar su compra en el autoservicio?</p>
+            <p style="font-size: 1.3rem; font-weight: bold; margin-bottom: 1.5rem; color: var(--success);" id="modalTotalText">$0</p>
+
+            <div class="modal-actions">
+                <button type="button" id="btnCancelModal" class="btn-secondary">Cancelar</button>
+                <button type="button" id="btnConfirmOrder" class="btn-primary" style="background-color: var(--success);">
+                    Sí, Confirmar Compra
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer requerido en todas las pantallas -->
+    <footer class="client-footer">
+        <p>&copy; 2026 <strong>TechStore Autoservicio</strong> - Programación III | División 334</p>
+    </footer>
+
+    <script src="js/client.js"></script>
+</body>
+</html>
