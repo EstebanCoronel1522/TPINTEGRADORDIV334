@@ -1,0 +1,13 @@
+{
+  "name": "tpintegradordiv334",
+  "version": "1.0.0",
+  "description": "Trabajo Integrador Programación III - Autoservicio (Backend + Frontend)",
+  "type": "module",
+  "scripts": {
+    "dev": "npm --prefix BACKEND run dev",
+    "start": "npm --prefix BACKEND start"
+  },
+  "keywords": [],
+  "author": "División 334",
+  "license": "ISC"
+}
