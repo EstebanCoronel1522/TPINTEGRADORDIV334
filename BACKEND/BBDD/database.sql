@@ -71,7 +71,7 @@ INSERT INTO `products` (`id`, `name`, `image`, `category`, `price`, `active`) VA
 
 -- --------------------------------------------------------
 -- Datos iniciales para `users` (password hasheado para 'admin123')
--- Hash bcrypt de 'admin123': $2b$10$wT0X8rPjE14yVfJv4W8yheTzN1YxZ893hHwNkV5b.0n9QY5e7vNWe
+-- Hash bcrypt de 'admin123': $2b$10$Ml7MMbWH.iMJEf4PPGzjNeMbb6xD6jRjkJAZam4wmvOuVyxe5/VdC
 -- --------------------------------------------------------
 INSERT INTO `users` (`id`, `name`, `email`, `password`, `is_admin`) VALUES
-(1, 'Administrador General', 'admin@autoservicio.com', '$2b$10$wT0X8rPjE14yVfJv4W8yheTzN1YxZ893hHwNkV5b.0n9QY5e7vNWe', 1);
+(1, 'Administrador General', 'admin@autoservicio.com', '$2b$10$Ml7MMbWH.iMJEf4PPGzjNeMbb6xD6jRjkJAZam4wmvOuVyxe5/VdC', 1);
