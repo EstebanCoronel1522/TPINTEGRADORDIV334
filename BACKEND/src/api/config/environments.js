@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 dotenv.config(); // Carga las variables de entorno desde el archivo .env
 
 export default {
-    port: process.env.PORT || 3000,
+    port: process.env.PORT || 3001,
     database: {
         host: process.env.DB_HOST || "localhost",
         name: process.env.DB_NAME || "tp_autoservicio",
