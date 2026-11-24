@@ -6,12 +6,20 @@ function mostrarMensaje(tipo, mensaje) {
     contenedorProductos.innerHTML = `<p class="mensaje ${tipo}">${mensaje}</p>`;
 }
 
+const productSearchPromise = window.createProductAutocomplete("productSearch", "productOptions")
+    .catch((error) => {
+        console.error("Error al cargar productos para la búsqueda:", error);
+        mostrarMensaje("error", "No se pudieron cargar los productos para buscar.");
+        return null;
+    });
+
 getProductForm.addEventListener("submit", async (event) => {
     event.preventDefault();
-    const idProd = event.target.idProd.value.trim();
+    const productSearch = await productSearchPromise;
+    const idProd = productSearch?.getSelectedId();
 
     if (!idProd) {
-        return mostrarMensaje("error", "Ingresa un ID valido");
+        return mostrarMensaje("error", "Escribe y selecciona un producto de las sugerencias.");
     }
 
     try {
@@ -32,7 +40,7 @@ getProductForm.addEventListener("submit", async (event) => {
 
 function renderizarProductoParaBaja(producto) {
     const estado = producto.active ? "Activo" : "Inactivo";
-    const textoToggle = producto.active ? "Desactivar (Baja Lógica)" : "Reactivar Producto";
+    const textoToggle = producto.active ? "Desactivar producto" : "Reactivar producto";
     const nuevoEstado = producto.active ? 0 : 1;
 
     let htmlProducto = `
@@ -43,7 +51,7 @@ function renderizarProductoParaBaja(producto) {
                 <p><strong>ID:</strong> ${producto.id} | <strong>Estado actual:</strong> ${estado}</p>
                 <div class="acciones-baja">
                     <button type="button" id="btn-toggle" class="btn-toggle">${textoToggle}</button>
-                    <button type="button" id="btn-eliminar" class="btn-eliminar">Eliminar Permanentemente</button>
+                    <button type="button" id="btn-eliminar" class="btn-eliminar">Eliminar producto</button>
                 </div>
             </div>
         </div>
@@ -51,17 +59,15 @@ function renderizarProductoParaBaja(producto) {
 
     contenedorProductos.innerHTML = htmlProducto;
 
-    // Baja lógica (toggle status)
     document.getElementById("btn-toggle").addEventListener("click", () => {
-        const confirmacion = confirm(`¿Esta seguro de ${producto.active ? 'desactivar' : 'reactivar'} el producto '${producto.name}'?`);
+        const confirmacion = confirm(`¿Está seguro de ${producto.active ? 'desactivar' : 'reactivar'} el producto '${producto.name}'?`);
         if (confirmacion) {
             cambiarEstado(producto.id, nuevoEstado);
         }
     });
 
-    // Baja física (DELETE)
     document.getElementById("btn-eliminar").addEventListener("click", () => {
-        const confirmacion = confirm(`¿Esta completamente seguro de ELIMINAR '${producto.name}' de la base de datos? Esta accion no se puede deshacer.`);
+        const confirmacion = confirm(`¿Está seguro de eliminar '${producto.name}' de la base de datos? Esta acción no se puede deshacer.`);
         if (confirmacion) {
             eliminarFisico(producto.id);
         }

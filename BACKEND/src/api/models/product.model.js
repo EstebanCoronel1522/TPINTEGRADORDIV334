@@ -39,7 +39,7 @@ export const updateProduct = (name, image, price, category, active, id) => {
 };
 
 /////////////////////////////
-// Modificar estado de producto (baja logica / reactivacion)
+// Modificar estado activo/inactivo de producto
 export const updateProductStatus = (id, active) => {
     const sql = "UPDATE products SET active = ? WHERE id = ?";
     return connection.query(sql, [active, id]);

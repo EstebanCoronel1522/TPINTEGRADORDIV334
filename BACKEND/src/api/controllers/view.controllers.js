@@ -24,11 +24,11 @@ export const vistaPrincipal = async (req, res) => {
     }
 };
 
-// Vista consultar producto por ID
+// Vista consultar producto
 export const vistaConsultar = (req, res) => {
     res.render("get", {
         title: "Consultar Producto",
-        about: "Consultar producto por ID"
+        about: "Buscar producto"
     });
 };
 
@@ -40,11 +40,12 @@ export const vistaCrear = (req, res) => {
     });
 };
 
-// Vista crear usuario administrador
+// Vista para crear y gestionar usuarios
 export const vistaCrearUser = (req, res) => {
     res.render("createUser", {
         title: "Crear Usuario",
-        about: "Alta de nuevo usuario administrador"
+        about: "Alta de nuevo usuario",
+        user: req.session.user
     });
 };
 
@@ -56,10 +57,10 @@ export const vistaModificar = (req, res) => {
     });
 };
 
-// Vista eliminar producto / baja logica
+// Vista desactivar o eliminar producto
 export const vistaEliminar = (req, res) => {
     res.render("delete", {
-        title: "Eliminar Producto",
-        about: "Baja física o lógica de producto"
+        title: "Desactivar o eliminar producto",
+        about: "Desactivar o eliminar producto"
     });
 };

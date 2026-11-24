@@ -119,6 +119,27 @@ body {
     background-color: var(--card-border);
 }
 
+.nav-link[hidden] {
+    display: none;
+}
+
+.auth-logout-form {
+    display: inline-flex;
+    margin: 0;
+}
+
+.auth-logout-form[hidden] {
+    display: none;
+}
+
+.auth-logout-form .nav-link {
+    font: inherit;
+    color: var(--text-color);
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
 .btn-theme {
     background: none;
     border: 1px solid var(--card-border);

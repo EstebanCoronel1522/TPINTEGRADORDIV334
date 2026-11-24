@@ -2,11 +2,15 @@ const urlBase = window.location.origin || "http://localhost:3000";
 const contenedorProductos = document.getElementById("contenedor-productos");
 const createProductForm = document.getElementById("createProductForm");
 
-function validarFormulario(data) {
+function validarFormulario(data, hasImageFile) {
     const errores = [];
 
-    if (!data.name || !data.price || !data.image || !data.category) {
+    if (!data.name || !data.price || (!data.image && !hasImageFile) || !data.category) {
         errores.push("Faltan campos requeridos");
+    }
+
+    if (data.image && hasImageFile) {
+        errores.push("Indica una URL o adjunta un archivo, no ambos.");
     }
 
     if (data.name && data.name.trim().length < 2) {
@@ -41,12 +45,14 @@ createProductForm.addEventListener("submit", async (event) => {
 
     const formData = new FormData(event.target);
     const formObj = Object.fromEntries(formData.entries());
+    const imageFile = formData.get("imageFile");
+    const hasImageFile = imageFile instanceof File && imageFile.size > 0;
 
     formObj.price = Number(formObj.price);
     formObj.name = formObj.name.trim();
     formObj.image = formObj.image.trim();
 
-    const errores = validarFormulario(formObj);
+    const errores = validarFormulario(formObj, hasImageFile);
     if (errores.length > 0) {
         return mostrarListaErrores(errores);
     }
@@ -54,10 +60,7 @@ createProductForm.addEventListener("submit", async (event) => {
     try {
         const response = await fetch(`${urlBase}/api/products`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(formObj)
+            body: formData
         });
 
         const data = await response.json();

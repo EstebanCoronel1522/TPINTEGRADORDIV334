@@ -19,8 +19,12 @@
                 <option value="componentes">Componentes</option>
             </select>
 
-            <label for="image">URL de Imagen</label>
-            <input type="url" name="image" id="image" placeholder="https://..." required>
+            <label for="image">URL de imagen (opcional)</label>
+            <input type="url" name="image" id="image" placeholder="https://...">
+
+            <label for="imageFile">O seleccionar imagen desde la PC</label>
+            <input type="file" name="imageFile" id="imageFile" accept="image/png,image/jpeg,image/gif,image/webp">
+            <small>PNG, JPG, GIF o WebP; máximo 5 MB. Se guarda en el servidor local.</small>
 
             <input type="submit" value="Crear Producto">
         </form>

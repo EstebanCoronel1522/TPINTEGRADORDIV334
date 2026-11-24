@@ -3,6 +3,7 @@
 ============================*/
 
 import ProductModel from "../models/product.model.js";
+import { unlink } from "node:fs/promises";
 
 /////////////////////////////
 // Obtener todos los productos (API)
@@ -94,6 +95,15 @@ export const createProduct = async (req, res) => {
         });
     } catch (error) {
         console.log("Error creando producto: ", error);
+        if (req.uploadedImagePath) {
+            try {
+                await unlink(req.uploadedImagePath);
+            } catch (cleanupError) {
+                if (cleanupError.code !== "ENOENT") {
+                    console.log("Error limpiando imagen de producto:", cleanupError);
+                }
+            }
+        }
         res.status(500).json({
             message: "Error interno al crear producto"
         });

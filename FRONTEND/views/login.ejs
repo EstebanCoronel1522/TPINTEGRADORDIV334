@@ -7,7 +7,6 @@
         </div>
         <div class="brand-info">
             <h1 class="brand-title">TechStore Autoservicio</h1>
-            <p class="students-badge">Desarrollado por: División 334 - UTN</p>
         </div>
     </div>
 </header>
@@ -17,30 +16,28 @@
         <h3 class="centrado"><%= about %></h3>
 
         <form class="form-login" action="/login" method="POST">
+            <input type="hidden" name="next" value="<%= next %>">
             <label for="emailUser">Correo Electrónico</label>
-            <input type="email" name="email" id="emailUser" placeholder="admin@autoservicio.com" required>
+            <input type="email" name="email" id="emailUser" placeholder="correo@ejemplo.com" required>
 
             <label for="passwordUser">Contraseña</label>
             <input type="password" name="password" id="passwordUser" placeholder="••••••••" required>
 
             <div class="login-actions">
                 <input type="submit" value="Iniciar Sesión">
-                <button type="button" id="btn-quick-access" class="btn-secondary">Acceso Rápido (Tester)</button>
             </div>
         </form>
+
+        <p class="centrado">¿No tienes cuenta? <a href="<%= registerUrl %>">Regístrate como usuario común</a></p>
+
+        <% if (typeof message !== "undefined") { %>
+            <p class="mensaje exito centrado"><%= message %></p>
+        <% } %>
 
         <% if (typeof error !== "undefined") { %>
             <p class="mensaje error centrado"><%= error %></p>
         <% } %>
     </div>
 </main>
-
-<script>
-    // Botón de acceso rápido para facilitar el testing del evaluador
-    document.getElementById("btn-quick-access")?.addEventListener("click", () => {
-        document.getElementById("emailUser").value = "admin@autoservicio.com";
-        document.getElementById("passwordUser").value = "admin123";
-    });
-</script>
 
 <%- include("partials/footer.ejs") %>

@@ -1,0 +1,43 @@
+<%- include("partials/head.ejs") %>
+
+<header class="app-header">
+    <div class="brand-bar">
+        <div class="logo-container">
+            <a href="/index.html">
+                <img class="logo-header" src="/img/logo.jpg" alt="Logo de TechStore">
+            </a>
+        </div>
+        <div class="brand-info">
+            <h1 class="brand-title">TechStore Autoservicio</h1>
+        </div>
+    </div>
+</header>
+
+<main>
+    <div class="login-wrapper">
+        <h3 class="centrado"><%= about %></h3>
+        <p class="centrado">La cuenta se crea como usuario común, sin permisos de administrador.</p>
+
+        <form class="form-login" action="/register" method="POST">
+            <input type="hidden" name="next" value="<%= next %>">
+            <label for="nameUser">Nombre completo</label>
+            <input type="text" name="name" id="nameUser" minlength="2" autocomplete="name" required>
+
+            <label for="emailUser">Correo electrónico</label>
+            <input type="email" name="email" id="emailUser" autocomplete="email" required>
+
+            <label for="passwordUser">Contraseña</label>
+            <input type="password" name="password" id="passwordUser" minlength="4" autocomplete="new-password" required>
+
+            <input type="submit" value="Crear cuenta">
+        </form>
+
+        <% if (typeof error !== "undefined") { %>
+            <p class="mensaje error centrado"><%= error %></p>
+        <% } %>
+
+        <p class="centrado">¿Ya tienes cuenta? <a href="/login">Inicia sesión</a></p>
+    </div>
+</main>
+
+<%- include("partials/footer.ejs") %>

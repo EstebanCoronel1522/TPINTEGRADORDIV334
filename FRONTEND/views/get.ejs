@@ -6,8 +6,12 @@
         <h3 class="centrado"><%= about %></h3>
 
         <form id="getProductForm">
-            <label for="idProd">ID del Producto</label>
-            <input type="number" name="idProd" id="idProd" min="1" placeholder="Ej: 1" required>
+            <label for="productSearch">Producto</label>
+            <div class="product-search">
+                <input type="search" id="productSearch" placeholder="Escribe para buscar..." autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="productOptions" required>
+                <div id="productOptions" class="product-search-options" role="listbox" hidden></div>
+            </div>
+            <small id="productSearchStatus" role="status"></small>
 
             <input type="submit" value="Consultar">
         </form>
@@ -16,6 +20,7 @@
     </section>
 </main>
 
+<script src="/js/product-search.js"></script>
 <script src="/js/get.js"></script>
 
 <%- include("partials/footer.ejs") %>

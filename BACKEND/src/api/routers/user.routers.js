@@ -3,12 +3,13 @@
 ======================*/
 
 import { Router } from "express";
-import { validateUser } from "../middlewares/middlewares.js";
-import { createNewUser } from "../controllers/user.controllers.js";
+import { requireAdmin, validateId, validateUser } from "../middlewares/middlewares.js";
+import { createNewUser, getAllUsers, updateUserRole } from "../controllers/user.controllers.js";
 
 const router = Router();
 
-// POST crear nuevo usuario admin (hasheando password con bcrypt)
-router.post("/", validateUser, createNewUser);
+router.get("/", requireAdmin, getAllUsers);
+router.post("/", requireAdmin, validateUser, createNewUser);
+router.patch("/:id/role", requireAdmin, validateId, updateUserRole);
 
 export default router;

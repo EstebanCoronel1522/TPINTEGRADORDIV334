@@ -11,5 +11,6 @@ export default {
         user: process.env.DB_USER || "root",
         password: process.env.DB_PASSWORD || ""
     },
-    session_key: process.env.SESSION_KEY || "clave_secreta_autoservicio"
+    session_key: process.env.SESSION_KEY || "clave_secreta_autoservicio",
+    jwt_secret: process.env.JWT_SECRET || process.env.SESSION_KEY || "clave_secreta_autoservicio"
 };

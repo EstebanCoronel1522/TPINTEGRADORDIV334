@@ -3,7 +3,8 @@
 ======================*/
 
 import { Router } from "express";
-import { validateId, validateProduct } from "../middlewares/middlewares.js";
+import { requireAdmin, validateId, validateProduct } from "../middlewares/middlewares.js";
+import { parseProductImage, storeProductImage } from "../middlewares/product-image-upload.js";
 import {
     getAllProducts,
     getActiveProducts,
@@ -26,15 +27,15 @@ router.get("/active", getActiveProducts);
 router.get("/:id", validateId, getProductById);
 
 // POST crear nuevo producto
-router.post("/", validateProduct, createProduct);
+router.post("/", requireAdmin, parseProductImage, validateProduct, storeProductImage, createProduct);
 
 // PUT modificar producto
-router.put("/", validateProduct, modifyProduct);
+router.put("/", requireAdmin, validateProduct, modifyProduct);
 
-// PATCH alternar estado activo/inactivo (baja logica / reactivacion)
-router.patch("/:id/status", validateId, toggleStatus);
+// PATCH cambiar el estado activo/inactivo
+router.patch("/:id/status", requireAdmin, validateId, toggleStatus);
 
 // DELETE eliminar producto fisicamente
-router.delete("/:id", validateId, removeProduct);
+router.delete("/:id", requireAdmin, validateId, removeProduct);
 
 export default router;

@@ -18,7 +18,6 @@
                 <img src="img/logo.jpg" alt="Logo TechStore" class="app-logo">
                 <div>
                     <h1 class="brand-title">TechStore Autoservicio</h1>
-                    <p class="students-tag">Alumnos: División 334 - UTN</p>
                 </div>
             </a>
 
@@ -29,9 +28,12 @@
                     <a href="carrito.html" class="nav-link">
                         Carrito <span class="cart-badge">0</span>
                     </a>
-                    <a href="/login" class="nav-link" target="_blank" title="Acceso al panel backoffice">
-                        Panel Admin
+                    <a id="authLoginLink" href="/login" class="nav-link" title="Iniciar sesión o registrarse">
+                        Iniciar Sesión
                     </a>
+                    <form id="authLogoutForm" class="auth-logout-form" action="/logout" method="POST" hidden>
+                        <button type="submit" class="nav-link">Cerrar sesión</button>
+                    </form>
                 </nav>
                 <button type="button" id="themeToggle" class="btn-theme">🌙 Modo Oscuro</button>
             </div>
@@ -45,7 +47,6 @@
                 <div class="ticket-header">
                     <h2 style="font-size: 1.5rem; color: var(--primary);">TechStore Autoservicio S.A.</h2>
                     <p style="font-size: 0.85rem; color: var(--text-muted);">Comprobante No Fiscal de Autoservicio</p>
-                    <p style="font-size: 0.85rem; color: var(--text-muted);">División 334 - UTN Programación III</p>
                 </div>
 
                 <div style="margin-bottom: 1rem; font-size: 0.95rem; line-height: 1.6;">

@@ -46,6 +46,7 @@ CREATE TABLE IF NOT EXISTS `sales` (
 CREATE TABLE IF NOT EXISTS `product_sales` (
   `product_id` INT NOT NULL,
   `sale_id` INT NOT NULL,
+  `quantity` INT NOT NULL DEFAULT 1,
   PRIMARY KEY (`product_id`, `sale_id`),
   KEY `sale_id` (`sale_id`),
   CONSTRAINT `fk_product_sales_products` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -71,7 +72,7 @@ INSERT INTO `products` (`id`, `name`, `image`, `category`, `price`, `active`) VA
 
 -- --------------------------------------------------------
 -- Datos iniciales para `users` (password hasheado para 'admin123')
--- Hash bcrypt de 'admin123': $2b$10$Ml7MMbWH.iMJEf4PPGzjNeMbb6xD6jRjkJAZam4wmvOuVyxe5/VdC
+-- Hash bcrypt de 'admin123': $2b$10$X5xOuPjJxJcNVx1Oz2il9.YQe1yGlqejsnz1TLxk02ymk4kEWWVoi
 -- --------------------------------------------------------
 INSERT INTO `users` (`id`, `name`, `email`, `password`, `is_admin`) VALUES
-(1, 'Administrador General', 'admin@autoservicio.com', '$2b$10$Ml7MMbWH.iMJEf4PPGzjNeMbb6xD6jRjkJAZam4wmvOuVyxe5/VdC', 1);
+(1, 'Administrador General', 'admin@autoservicio.com', '$2b$10$X5xOuPjJxJcNVx1Oz2il9.YQe1yGlqejsnz1TLxk02ymk4kEWWVoi', 1);

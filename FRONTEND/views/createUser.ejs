@@ -15,8 +15,10 @@
             <label for="passwordUser">Contraseña</label>
             <input type="password" name="password" id="passwordUser" placeholder="••••••••" required>
 
-            <input type="submit" value="Crear Administrador">
+            <input type="submit" value="Crear usuario">
         </form>
+
+        <p>Los usuarios nuevos se crean como usuarios normales. Desde esta lista puedes promoverlos a administradores.</p>
 
         <% if (typeof message !== "undefined") { %>
             <p class="mensaje exito centrado"><%= message %></p>
@@ -26,6 +28,26 @@
             <p class="mensaje error centrado"><%= error %></p>
         <% } %>
     </section>
+
+    <section class="users-management">
+        <h3 class="centrado">Usuarios registrados</h3>
+        <p id="usersStatus" role="status">Cargando usuarios...</p>
+        <div class="users-table-wrapper">
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Correo</th>
+                        <th>Rol</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="usersList"></tbody>
+            </table>
+        </div>
+        <div id="usersManagement" data-current-user-id="<%= user.id %>"></div>
+    </section>
 </main>
 
+<script src="/js/user-management.js"></script>
 <%- include("partials/footer.ejs") %>

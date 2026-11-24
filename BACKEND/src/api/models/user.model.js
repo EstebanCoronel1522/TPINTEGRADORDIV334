@@ -22,8 +22,23 @@ export const findUserById = (id) => {
     return connection.query(sql, [id]);
 };
 
+export const selectAllUsers = () => {
+    return connection.query("SELECT id, name, email, is_admin FROM users ORDER BY id");
+};
+
+export const updateUserRole = (id, isAdmin) => {
+    return connection.query("UPDATE users SET is_admin = ? WHERE id = ?", [isAdmin, id]);
+};
+
+export const countAdmins = () => {
+    return connection.query("SELECT COUNT(*) AS total FROM users WHERE is_admin = 1");
+};
+
 export default {
     insertNewUser,
     findUserByEmail,
-    findUserById
+    findUserById,
+    selectAllUsers,
+    updateUserRole,
+    countAdmins
 };

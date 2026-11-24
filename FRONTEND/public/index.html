@@ -16,7 +16,6 @@
                 <img src="img/logo.jpg" alt="Logo TechStore" class="app-logo">
                 <div>
                     <h1 class="brand-title">TechStore Autoservicio</h1>
-                    <p class="students-tag">Alumnos: División 334 - UTN</p>
                 </div>
             </a>
 
@@ -27,9 +26,12 @@
                     <a href="carrito.html" class="nav-link">
                         Carrito <span class="cart-badge">0</span>
                     </a>
-                    <a href="/login" class="nav-link" target="_blank" title="Acceso al panel backoffice">
-                        Panel Admin
+                    <a id="authLoginLink" href="/login" class="nav-link" title="Iniciar sesión o registrarse">
+                        Iniciar Sesión
                     </a>
+                    <form id="authLogoutForm" class="auth-logout-form" action="/logout" method="POST" hidden>
+                        <button type="submit" class="nav-link">Cerrar sesión</button>
+                    </form>
                 </nav>
                 <button type="button" id="themeToggle" class="btn-theme">🌙 Modo Oscuro</button>
             </div>
@@ -40,16 +42,10 @@
     <main class="main-content">
         <div class="welcome-card">
             <h2 class="welcome-title">Bienvenido/a al Autoservicio</h2>
-            <p class="welcome-subtitle">Por favor, ingrese su nombre para comenzar a armar su pedido de Hardware y Periféricos.</p>
-
-            <form id="welcomeForm" class="welcome-form">
-                <div>
-                    <label for="userName" class="form-label">Su Nombre:</label>
-                    <input type="text" id="userName" class="form-input" placeholder="Ej: Lucas" required autocomplete="name">
-                </div>
-
-                <button type="submit" class="btn-primary">Continuar a Productos &rarr;</button>
-            </form>
+            <p class="welcome-subtitle">Explora el catálogo sin iniciar sesión. Para agregar productos al carrito y comprar, inicia sesión.</p>
+            <a href="productos.html" class="btn-primary" style="display: inline-block; margin-top: 1rem; text-decoration: none;">
+                Ver productos &rarr;
+            </a>
         </div>
     </main>
 

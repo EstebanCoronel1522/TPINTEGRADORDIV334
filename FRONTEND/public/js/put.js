@@ -37,13 +37,21 @@ function mostrarListaErrores(array) {
     contenedorProductos.innerHTML = htmlErrores;
 }
 
+const productSearchPromise = window.createProductAutocomplete("productSearch", "productOptions")
+    .catch((error) => {
+        console.error("Error al cargar productos para la búsqueda:", error);
+        mostrarMensaje("error", "No se pudieron cargar los productos para buscar.");
+        return null;
+    });
+
 getProductForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     contenedorForm.innerHTML = "";
 
-    const idProd = event.target.idProd.value.trim();
+    const productSearch = await productSearchPromise;
+    const idProd = productSearch?.getSelectedId();
     if (!idProd) {
-        return mostrarMensaje("error", "Ingresa un ID valido");
+        return mostrarMensaje("error", "Escribe y selecciona un producto de las sugerencias.");
     }
 
     try {

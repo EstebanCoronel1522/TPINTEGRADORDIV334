@@ -4,6 +4,83 @@
 ============================================== */
 
 const API_BASE_URL = window.location.origin || "http://localhost:3000";
+let authenticatedUser = null;
+
+async function getAuthenticatedUser() {
+    const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+        cache: "no-store",
+        credentials: "same-origin"
+    });
+    if (response.status === 401) return null;
+
+    const data = await response.json();
+    if (!response.ok) {
+        throw new Error(data.message || "No se pudo verificar la sesión");
+    }
+
+    return data.payload;
+}
+
+async function updateAuthNavigation(loginLink, logoutForm) {
+    loginLink.hidden = true;
+    logoutForm.hidden = true;
+
+    try {
+        const user = await getAuthenticatedUser();
+        setAuthenticatedUser(user);
+        if (user) {
+            logoutForm.hidden = false;
+        } else {
+            loginLink.hidden = false;
+        }
+    } catch (error) {
+        console.error("No se pudo actualizar la navegación de sesión:", error);
+        setAuthenticatedUser(null);
+        loginLink.hidden = false;
+    }
+}
+
+function setAuthenticatedUser(user) {
+    const userId = user ? String(user.id) : null;
+    const cartOwnerId = localStorage.getItem("autoservicio_cart_owner");
+    if (!userId || cartOwnerId !== userId) {
+        localStorage.removeItem("autoservicio_cart");
+    }
+
+    if (userId) {
+        localStorage.setItem("autoservicio_cart_owner", userId);
+    } else {
+        localStorage.removeItem("autoservicio_cart_owner");
+        localStorage.removeItem("autoservicio_usuario");
+    }
+
+    authenticatedUser = user;
+    updateCartBadge();
+    document.dispatchEvent(new Event("auth-state-changed"));
+}
+
+function initAuthNavigation() {
+    const loginLink = document.getElementById("authLoginLink");
+    const logoutForm = document.getElementById("authLogoutForm");
+    if (!loginLink || !logoutForm) return Promise.resolve(null);
+
+    logoutForm.addEventListener("submit", () => {
+        localStorage.removeItem("autoservicio_cart");
+        localStorage.removeItem("autoservicio_cart_owner");
+        localStorage.removeItem("autoservicio_ticket");
+        localStorage.removeItem("autoservicio_usuario");
+    });
+
+    const refreshNavigation = () => updateAuthNavigation(loginLink, logoutForm);
+    const initialAuthCheck = refreshNavigation();
+    window.addEventListener("focus", refreshNavigation);
+    document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) {
+            refreshNavigation();
+        }
+    });
+    return initialAuthCheck;
+}
 
 // =================== GESTION DEL TEMA ===================
 function initTheme() {
@@ -32,6 +109,12 @@ function updateThemeButton(theme) {
 
 // =================== GESTION DEL CARRITO ===================
 function getCart() {
+    if (!authenticatedUser
+        || localStorage.getItem("autoservicio_cart_owner") !== String(authenticatedUser.id)) {
+        localStorage.removeItem("autoservicio_cart");
+        return [];
+    }
+
     try {
         return JSON.parse(localStorage.getItem("autoservicio_cart")) || [];
     } catch {
@@ -40,7 +123,15 @@ function getCart() {
 }
 
 function saveCart(cart) {
+    if (!authenticatedUser) {
+        localStorage.removeItem("autoservicio_cart");
+        localStorage.removeItem("autoservicio_cart_owner");
+        updateCartBadge();
+        return;
+    }
+
     localStorage.setItem("autoservicio_cart", JSON.stringify(cart));
+    localStorage.setItem("autoservicio_cart_owner", String(authenticatedUser.id));
     updateCartBadge();
 }
 
@@ -54,6 +145,8 @@ function updateCartBadge() {
 }
 
 function addToCart(product, quantity = 1) {
+    if (!authenticatedUser) return;
+
     const cart = getCart();
     const existingIndex = cart.findIndex(item => item.id === product.id);
 
@@ -73,7 +166,22 @@ function addToCart(product, quantity = 1) {
     saveCart(cart);
 }
 
-function updateQuantity(productId, delta) {
+async function updateQuantity(productId, delta) {
+    if (delta > 0) {
+        try {
+            const user = await getAuthenticatedUser();
+            setAuthenticatedUser(user);
+            if (!user) {
+                window.location.href = "/login?next=%2Fcarrito.html";
+                return;
+            }
+        } catch (error) {
+            console.error("Error verificando autenticación:", error);
+            alert("No se pudo verificar la sesión. Inténtalo nuevamente.");
+            return;
+        }
+    }
+
     const cart = getCart();
     const item = cart.find(i => i.id === productId);
     if (!item) return;
@@ -94,36 +202,6 @@ function removeFromCart(productId) {
     renderCartPage();
 }
 
-// =================== PANTALLA: BIENVENIDA (index.html) ===================
-function initWelcomePage() {
-    const welcomeForm = document.getElementById("welcomeForm");
-    if (!welcomeForm) return;
-
-    // Si ya habia un nombre guardado, lo sugiere
-    const savedName = localStorage.getItem("autoservicio_usuario");
-    if (savedName) {
-        const input = document.getElementById("userName");
-        if (input) input.value = savedName;
-    }
-
-    welcomeForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const userNameInput = document.getElementById("userName");
-        const name = userNameInput ? userNameInput.value.trim() : "";
-
-        if (!name) {
-            alert("Por favor, ingrese su nombre para continuar.");
-            return;
-        }
-
-        // Guarda el nombre en localStorage
-        localStorage.setItem("autoservicio_usuario", name);
-
-        // Redirige a la pantalla de productos
-        window.location.href = "productos.html";
-    });
-}
-
 // =================== PANTALLA: PRODUCTOS (productos.html) ===================
 let allProducts = [];
 let currentCategory = "todos";
@@ -134,19 +212,17 @@ async function initProductsPage() {
     const productsContainer = document.getElementById("productsContainer");
     if (!productsContainer) return;
 
-    // Validar que el usuario haya ingresado su nombre
-    const userName = localStorage.getItem("autoservicio_usuario");
-    if (!userName) {
-        alert("Debe ingresar su nombre antes de ver los productos.");
-        window.location.href = "index.html";
-        return;
-    }
-
-    // Saludo al usuario
     const userGreeting = document.getElementById("userGreeting");
-    if (userGreeting) {
-        userGreeting.textContent = `¡Hola, ${userName}!`;
-    }
+    const updateGreeting = () => {
+        if (userGreeting) {
+            userGreeting.textContent = authenticatedUser
+                ? `¡Hola, ${authenticatedUser.name}!`
+                : "Catálogo de Productos";
+        }
+        if (allProducts.length > 0) renderProducts();
+    };
+    document.addEventListener("auth-state-changed", updateGreeting);
+    updateGreeting();
 
     // Obtener productos desde API o fallback JSON
     await loadProducts();
@@ -211,10 +287,11 @@ function renderProducts() {
     if (!productsContainer) return;
 
     // Filtrar por categoría
-    let filtered = allProducts;
+    let filtered = allProducts.slice();
     if (currentCategory !== "todos") {
-        filtered = allProducts.filter(p => p.category === currentCategory);
+        filtered = filtered.filter(p => p.category === currentCategory);
     }
+    filtered.sort((a, b) => a.name.localeCompare(b.name, "es", { sensitivity: "base" }));
 
     if (filtered.length === 0) {
         productsContainer.innerHTML = `<p class="centrado" style="grid-column: 1/-1;">No hay productos disponibles en esta categoría.</p>`;
@@ -240,9 +317,9 @@ function renderProducts() {
                 <div>
                     <div class="product-price">$${Number(p.price).toLocaleString('es-AR')}</div>
                     <div class="product-actions">
-                        <button class="btn-primary" style="flex: 1;" onclick="handleAddToCart(${p.id})">
-                            Agregar al Carrito
-                        </button>
+                        ${authenticatedUser
+                            ? `<button class="btn-primary" style="flex: 1;" onclick="handleAddToCart(${p.id})">Agregar al Carrito</button>`
+                            : `<a class="btn-primary" style="flex: 1; text-align: center; text-decoration: none;" href="/login?next=%2Fproductos.html">Iniciar sesión para agregar</a>`}
                     </div>
                 </div>
             </div>
@@ -273,11 +350,23 @@ function goToPage(page) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function handleAddToCart(productId) {
+async function handleAddToCart(productId) {
     const product = allProducts.find(p => p.id === productId);
-    if (product) {
+    if (!product) return;
+
+    try {
+        const user = await getAuthenticatedUser();
+        setAuthenticatedUser(user);
+        if (!user) {
+            window.location.href = "/login?next=%2Fproductos.html";
+            return;
+        }
+
         addToCart(product, 1);
         alert(`¡'${product.name}' se agregó al carrito!`);
+    } catch (error) {
+        console.error("Error verificando autenticación:", error);
+        alert("No se pudo verificar la sesión. Inténtalo nuevamente.");
     }
 }
 
@@ -287,6 +376,7 @@ function initCartPage() {
     if (!cartTableBody) return;
 
     renderCartPage();
+    document.addEventListener("auth-state-changed", renderCartPage);
 
     // Modal de confirmación de compra
     const btnCheckout = document.getElementById("btnCheckout");
@@ -295,10 +385,22 @@ function initCartPage() {
     const btnConfirmOrder = document.getElementById("btnConfirmOrder");
 
     if (btnCheckout && confirmModal) {
-        btnCheckout.addEventListener("click", () => {
+        btnCheckout.addEventListener("click", async () => {
             const cart = getCart();
             if (cart.length === 0) {
                 alert("El carrito está vacío. Agregue productos antes de continuar.");
+                return;
+            }
+
+            try {
+                const user = await getAuthenticatedUser();
+                if (!user) {
+                    window.location.href = "/login?next=%2Fcarrito.html";
+                    return;
+                }
+            } catch (error) {
+                console.error("Error verificando autenticación:", error);
+                alert(error.message);
                 return;
             }
 
@@ -320,7 +422,7 @@ function initCartPage() {
 
     if (btnConfirmOrder) {
         btnConfirmOrder.addEventListener("click", () => {
-            finalizarCompra();
+            finalizarCompra(btnConfirmOrder);
         });
     }
 }
@@ -330,6 +432,8 @@ function renderCartPage() {
     const cartEmptyMsg = document.getElementById("cartEmptyMsg");
     const cartContent = document.getElementById("cartContent");
     const cartTotalDisplay = document.getElementById("cartTotalDisplay");
+    const cartEmptyDescription = document.getElementById("cartEmptyDescription");
+    const cartEmptyLogin = document.getElementById("cartEmptyLogin");
 
     if (!cartTableBody) return;
 
@@ -338,6 +442,14 @@ function renderCartPage() {
     if (cart.length === 0) {
         if (cartEmptyMsg) cartEmptyMsg.style.display = "block";
         if (cartContent) cartContent.style.display = "none";
+        if (cartEmptyDescription) {
+            cartEmptyDescription.textContent = authenticatedUser
+                ? "Aún no ha seleccionado productos para su compra."
+                : "Inicia sesión para agregar productos a tu carrito.";
+        }
+        if (cartEmptyLogin) {
+            cartEmptyLogin.style.display = authenticatedUser ? "none" : "inline-block";
+        }
         return;
     }
 
@@ -380,52 +492,68 @@ function renderCartPage() {
     }
 }
 
-function finalizarCompra() {
+async function finalizarCompra(confirmButton) {
     const cart = getCart();
-    const userName = localStorage.getItem("autoservicio_usuario") || "Cliente";
-    const total = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-    const orderId = Math.floor(100000 + Math.random() * 900000);
+    if (cart.length === 0) {
+        alert("El carrito está vacío.");
+        return;
+    }
 
-    const ticketData = {
-        orderId: orderId,
-        userName: userName,
-        date: new Date().toLocaleString('es-AR'),
-        items: cart,
-        total: total
-    };
+    confirmButton.disabled = true;
+    try {
+        const user = await getAuthenticatedUser();
+        if (!user) {
+            window.location.href = "/login?next=%2Fcarrito.html";
+            return;
+        }
 
-    // Guardar ticket en localStorage para la pantalla ticket.html
-    localStorage.setItem("autoservicio_ticket", JSON.stringify(ticketData));
+        const response = await fetch(`${API_BASE_URL}/api/sales`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                products: cart.map(item => ({ id: item.id, quantity: item.quantity }))
+            })
+        });
+        const data = await response.json();
 
-    // Opcional: Intentar registrar la venta en la base de datos
-    fetch(`${API_BASE_URL}/api/sales`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            user_name: userName,
-            total_price: total,
-            products: cart.map(i => ({ id: i.id, quantity: i.quantity }))
-        })
-    }).catch(err => console.log("Nota: Guardado local de venta completado."));
+        if (response.status === 401) {
+            window.location.href = "/login?next=%2Fcarrito.html";
+            return;
+        }
+        if (!response.ok) {
+            throw new Error(data.message || "No se pudo registrar la compra");
+        }
 
-    // Limpiar carrito activo
-    localStorage.removeItem("autoservicio_cart");
-    updateCartBadge();
-
-    // Redirigir al ticket
-    window.location.href = "ticket.html";
+        const sale = data.payload;
+        const ticketData = {
+            orderId: sale.id,
+            userId: user.id,
+            userName: sale.user_name,
+            date: new Date(sale.date).toLocaleString("es-AR"),
+            items: sale.products,
+            total: Number(sale.total_price)
+        };
+        localStorage.setItem("autoservicio_ticket", JSON.stringify(ticketData));
+        localStorage.removeItem("autoservicio_cart");
+        updateCartBadge();
+        window.location.href = "ticket.html";
+    } catch (error) {
+        console.error("Error al finalizar la compra:", error);
+        alert(error.message);
+        confirmButton.disabled = false;
+    }
 }
 
 // =================== PANTALLA: TICKET (ticket.html) ===================
-function initTicketPage() {
+async function initTicketPage() {
     const ticketContainer = document.getElementById("ticketContainer");
     if (!ticketContainer) return;
 
     let ticket = null;
     try {
         ticket = JSON.parse(localStorage.getItem("autoservicio_ticket"));
-    } catch {
-        ticket = null;
+    } catch (error) {
+        console.error("No se pudo leer el ticket guardado:", error);
     }
 
     if (!ticket) {
@@ -433,6 +561,30 @@ function initTicketPage() {
             <div class="welcome-card">
                 <h3>No hay ticket disponible</h3>
                 <p>No se encontró ninguna compra reciente para mostrar.</p>
+                <a href="index.html" class="btn-primary" style="margin-top: 1rem; display: inline-block;">Ir al Inicio</a>
+            </div>
+        `;
+        return;
+    }
+
+    let user;
+    try {
+        user = await getAuthenticatedUser();
+    } catch (error) {
+        console.error("No se pudo verificar la sesión para mostrar el ticket:", error);
+        ticketContainer.innerHTML = `<p class="mensaje error">No se pudo verificar la sesión.</p>`;
+        return;
+    }
+
+    if (!user) {
+        window.location.href = "/login?next=%2Fticket.html";
+        return;
+    }
+    if (Number(ticket.userId) !== Number(user.id)) {
+        ticketContainer.innerHTML = `
+            <div class="welcome-card">
+                <h3>Ticket no disponible</h3>
+                <p>Este comprobante pertenece a otra cuenta.</p>
                 <a href="index.html" class="btn-primary" style="margin-top: 1rem; display: inline-block;">Ir al Inicio</a>
             </div>
         `;
@@ -473,9 +625,9 @@ function initTicketPage() {
     const btnRestart = document.getElementById("btnRestart");
     if (btnRestart) {
         btnRestart.addEventListener("click", () => {
-            localStorage.removeItem("autoservicio_usuario");
             localStorage.removeItem("autoservicio_ticket");
             localStorage.removeItem("autoservicio_cart");
+            localStorage.removeItem("autoservicio_cart_owner");
             window.location.href = "index.html";
         });
     }
@@ -553,11 +705,13 @@ function generarPdfTicket(ticket) {
 
 // Inicialización global según página
 document.addEventListener("DOMContentLoaded", () => {
+    const authReady = initAuthNavigation();
     initTheme();
-    updateCartBadge();
+    authReady.then(() => {
+        updateCartBadge();
 
-    initWelcomePage();
-    initProductsPage();
-    initCartPage();
-    initTicketPage();
+        initProductsPage();
+        initCartPage();
+        initTicketPage();
+    });
 });

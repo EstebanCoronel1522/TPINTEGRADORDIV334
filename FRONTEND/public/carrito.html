@@ -16,7 +16,6 @@
                 <img src="img/logo.jpg" alt="Logo TechStore" class="app-logo">
                 <div>
                     <h1 class="brand-title">TechStore Autoservicio</h1>
-                    <p class="students-tag">Alumnos: División 334 - UTN</p>
                 </div>
             </a>
 
@@ -27,9 +26,12 @@
                     <a href="carrito.html" class="nav-link">
                         Carrito <span class="cart-badge">0</span>
                     </a>
-                    <a href="/login" class="nav-link" target="_blank" title="Acceso al panel backoffice">
-                        Panel Admin
+                    <a id="authLoginLink" href="/login" class="nav-link" title="Iniciar sesión o registrarse">
+                        Iniciar Sesión
                     </a>
+                    <form id="authLogoutForm" class="auth-logout-form" action="/logout" method="POST" hidden>
+                        <button type="submit" class="nav-link">Cerrar sesión</button>
+                    </form>
                 </nav>
                 <button type="button" id="themeToggle" class="btn-theme">🌙 Modo Oscuro</button>
             </div>
@@ -51,7 +53,10 @@
         <!-- Mensaje si está vacío -->
         <div id="cartEmptyMsg" class="welcome-card" style="display: none;">
             <h3>Su carrito está vacío</h3>
-            <p style="color: var(--text-muted); margin: 1rem 0;">Aún no ha seleccionado productos para su compra.</p>
+            <p id="cartEmptyDescription" style="color: var(--text-muted); margin: 1rem 0;">Aún no ha seleccionado productos para su compra.</p>
+            <a id="cartEmptyLogin" href="/login?next=%2Fproductos.html" class="btn-primary" style="display: none; margin-bottom: 1rem; text-decoration: none;">
+                Iniciar sesión para agregar productos
+            </a>
             <a href="productos.html" class="btn-primary" style="display: inline-block;">Ver Catálogo de Productos</a>
         </div>
 

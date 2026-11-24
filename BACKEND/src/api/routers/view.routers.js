@@ -11,17 +11,17 @@ import {
     vistaModificar,
     vistaEliminar
 } from "../controllers/view.controllers.js";
-import { requireLogin } from "../middlewares/middlewares.js";
+import { requireAdmin } from "../middlewares/middlewares.js";
 
 const router = Router();
 
 // Todas las rutas del dashboard administrativo requieren sesion iniciada
-router.get("/", requireLogin, (req, res) => res.redirect("/dashboard/principal"));
-router.get("/principal", requireLogin, vistaPrincipal);
-router.get("/consultar", requireLogin, vistaConsultar);
-router.get("/crear", requireLogin, vistaCrear);
-router.get("/crearUser", requireLogin, vistaCrearUser);
-router.get("/modificar", requireLogin, vistaModificar);
-router.get("/eliminar", requireLogin, vistaEliminar);
+router.get("/", requireAdmin, (req, res) => res.redirect("/dashboard/principal"));
+router.get("/principal", requireAdmin, vistaPrincipal);
+router.get("/consultar", requireAdmin, vistaConsultar);
+router.get("/crear", requireAdmin, vistaCrear);
+router.get("/crearUser", requireAdmin, vistaCrearUser);
+router.get("/modificar", requireAdmin, vistaModificar);
+router.get("/eliminar", requireAdmin, vistaEliminar);
 
 export default router;

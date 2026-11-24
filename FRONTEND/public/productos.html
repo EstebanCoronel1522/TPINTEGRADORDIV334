@@ -16,7 +16,6 @@
                 <img src="img/logo.jpg" alt="Logo TechStore" class="app-logo">
                 <div>
                     <h1 class="brand-title">TechStore Autoservicio</h1>
-                    <p class="students-tag">Alumnos: División 334 - UTN</p>
                 </div>
             </a>
 
@@ -27,9 +26,12 @@
                     <a href="carrito.html" class="nav-link">
                         Carrito <span class="cart-badge">0</span>
                     </a>
-                    <a href="/login" class="nav-link" target="_blank" title="Acceso al panel backoffice">
-                        Panel Admin
+                    <a id="authLoginLink" href="/login" class="nav-link" title="Iniciar sesión o registrarse">
+                        Iniciar Sesión
                     </a>
+                    <form id="authLogoutForm" class="auth-logout-form" action="/logout" method="POST" hidden>
+                        <button type="submit" class="nav-link">Cerrar sesión</button>
+                    </form>
                 </nav>
                 <button type="button" id="themeToggle" class="btn-theme">🌙 Modo Oscuro</button>
             </div>
@@ -41,7 +43,7 @@
         <div class="section-header">
             <div>
                 <h2 id="userGreeting" style="font-size: 1.6rem; color: var(--primary);">Catálogo de Productos</h2>
-                <p style="color: var(--text-muted); font-size: 0.95rem;">Seleccione los productos deseados para su pedido de autoservicio.</p>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">Explora el catálogo. Inicia sesión para agregar productos al carrito y comprar.</p>
             </div>
             <a href="carrito.html" class="btn-primary" style="padding: 0.6rem 1.2rem; font-size: 0.95rem;">
                 Ver Carrito &rarr;

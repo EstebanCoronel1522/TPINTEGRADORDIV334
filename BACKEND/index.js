@@ -7,7 +7,7 @@ import session from "express-session";
 import { existsSync } from "fs";
 import environments from "./src/api/config/environments.js";
 import { loggerUrl } from "./src/api/middlewares/middlewares.js";
-import { authRouters, productRouters, userRouters, viewRouters } from "./src/api/routers/index.js";
+import { authRouters, productRouters, salesRouters, userRouters, viewRouters } from "./src/api/routers/index.js";
 import { __dirname, join } from "./src/api/utils/index.js";
 
 /*==================
@@ -25,6 +25,7 @@ const viewsPath = existsSync(join(__dirname, "../FRONTEND/views"))
 const publicPath = existsSync(join(__dirname, "../FRONTEND/public"))
     ? join(__dirname, "../FRONTEND/public")
     : join(__dirname, "public");
+const uploadsPath = join(__dirname, "uploads");
 
 app.set("view engine", "ejs");
 app.set("views", viewsPath);
@@ -33,6 +34,7 @@ app.set("views", viewsPath);
     Middlewares
 ==================*/
 // Middleware para servir archivos estáticos
+app.use("/uploads", express.static(uploadsPath, { dotfiles: "deny", index: false }));
 app.use(express.static(publicPath));
 
 // Habilitar CORS para peticiones desde el frontend
@@ -63,7 +65,7 @@ app.use(session({
 ==================*/
 // Redirección inicial
 app.get("/", (req, res) => {
-    res.redirect("/login");
+    res.redirect("/index.html");
 });
 
 // Rutas de autenticación (GET /login, POST /login, POST /logout)
@@ -77,6 +79,9 @@ app.use("/api/products", productRouters);
 
 // Endpoints de la API REST de usuarios (/api/users)
 app.use("/api/users", userRouters);
+
+// Endpoint para registrar compras autenticadas
+app.use("/api/sales", salesRouters);
 
 /*==================
     Inicio del Servidor

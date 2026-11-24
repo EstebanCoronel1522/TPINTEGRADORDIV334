@@ -2,6 +2,10 @@
     Middlewares
 ======================*/
 
+import UserModel from "../models/user.model.js";
+import jwt from "jsonwebtoken";
+import environments from "../config/environments.js";
+
 // Middleware logger para registrar en consola las solicitudes entrantes
 const loggerUrl = (req, res, next) => {
     const fecha = new Date();
@@ -29,9 +33,23 @@ const validateProduct = (req, res, next) => {
     const errores = [];
 
     const { name, image, price, category } = req.body;
+    const hasImageUrl = typeof image === "string" && image.trim().length > 0;
+    const hasImageFile = Boolean(req.file);
 
-    if (!name || !image || price === undefined || !category) {
-        errores.push("Faltan campos requeridos (name, image, price, category)");
+    if (!name || price === undefined || !category) {
+        errores.push("Faltan campos requeridos (name, price, category)");
+    }
+
+    if (!hasImageUrl && !hasImageFile) {
+        errores.push("Debes indicar una URL de imagen o adjuntar un archivo.");
+    }
+
+    if (hasImageUrl && hasImageFile) {
+        errores.push("Indica una URL o adjunta un archivo, no ambos.");
+    }
+
+    if (image !== undefined && typeof image !== "string") {
+        errores.push("La URL de imagen debe ser texto.");
     }
 
     if (typeof name !== "string" || name.trim().length < 2) {
@@ -89,12 +107,79 @@ const validateUser = (req, res, next) => {
     next();
 };
 
-// Middleware para proteger rutas del dashboard administrativo
-const requireLogin = (req, res, next) => {
+const requireAdmin = async (req, res, next) => {
     if (!req.session || !req.session.user) {
+        if (req.originalUrl.startsWith("/api/")) {
+            return res.status(401).json({ message: "Debes iniciar sesión como administrador" });
+        }
         return res.redirect("/login");
     }
-    next();
+
+    try {
+        const [rows] = await UserModel.findUserById(req.session.user.id);
+        if (rows.length === 0 || Number(rows[0].is_admin) !== 1) {
+            if (req.originalUrl.startsWith("/api/")) {
+                return res.status(403).json({ message: "Se requieren permisos de administrador" });
+            }
+            return res.status(403).send("Se requieren permisos de administrador");
+        }
+
+        req.session.user.is_admin = 1;
+        next();
+    } catch (error) {
+        console.log("Error verificando permisos de administrador:", error);
+        if (req.originalUrl.startsWith("/api/")) {
+            return res.status(500).json({ message: "No se pudieron verificar los permisos" });
+        }
+        return res.status(500).send("No se pudieron verificar los permisos");
+    }
+};
+
+const authenticateToken = async (req, res, next, optional = false) => {
+    const authorization = req.get("authorization");
+    const bearerToken = authorization?.match(/^Bearer\s+(.+)$/i)?.[1];
+    const cookieToken = req.headers.cookie
+        ?.split(";")
+        .map((cookie) => cookie.trim())
+        .find((cookie) => cookie.startsWith("auth_token="))
+        ?.slice("auth_token=".length);
+    const token = bearerToken || cookieToken;
+
+    if (!token) {
+        if (optional) {
+            req.authUser = null;
+            return next();
+        }
+        return res.status(401).json({ message: "Debes iniciar sesión para realizar esta acción" });
+    }
+
+    let claims;
+    try {
+        claims = jwt.verify(token, environments.jwt_secret);
+    } catch (error) {
+        const message = error.name === "TokenExpiredError"
+            ? "La sesión expiró. Inicia sesión nuevamente."
+            : "El token de autenticación no es válido";
+        return res.status(401).json({ message });
+    }
+
+    const userId = Number(claims.sub);
+    if (!Number.isInteger(userId) || userId <= 0) {
+        return res.status(401).json({ message: "El token de autenticación no es válido" });
+    }
+
+    try {
+        const [rows] = await UserModel.findUserById(userId);
+        if (rows.length === 0) {
+            return res.status(401).json({ message: "La cuenta asociada al token ya no existe" });
+        }
+
+        req.authUser = rows[0];
+        next();
+    } catch (error) {
+        console.log("Error verificando token de autenticación:", error);
+        res.status(500).json({ message: "No se pudo verificar la autenticación" });
+    }
 };
 
 export {
@@ -102,5 +187,6 @@ export {
     validateId,
     validateProduct,
     validateUser,
-    requireLogin
+    requireAdmin,
+    authenticateToken
 };
